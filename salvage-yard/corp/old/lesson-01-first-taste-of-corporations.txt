@@ -1,0 +1,227 @@
+# Lesson 1: First taste of corporations
+
+* This lesson and all lessons after it assume that you
+  are in BitNode 3: Corporatocracy.
+* This series of lessons were written based on bitburner v2.8.1
+
+## What can a corporation do for me?
+
+1. A properly managed corporation produces a TON of money.
+   * TODO: how much? how quickly?
+   * Note: some BitNodes heavily nerf or even disable corporations
+2. You can use a corporation to bribe a faction to gain reputation
+   * Unlike donations, bribes do not require accumulating 150 favor first
+   * TODO: check
+3. Unlike your money, your stats, the shares you bought
+   on the stock exchange and many other things,
+   corporations are unaffected when you install augments
+   * TODO: check
+
+## Create your first corporation
+
+1. Go to City Hall in Sector-12
+2. Click "Create a corporation"
+3. Enter the name for your corporation.
+4. Click "Use seed money"
+
+* The option to create a corporation by getting seed money from
+  the government is only available in BitNode 3. In other BitNodes
+  you will have to spend 150 billion to self-fund it.
+* Using seed money makes it cheap to experiment and learn
+
+Beware: Do not spend too much time on improving this corporation
+because you will sell it at the end of lesson 1 and start a new one.
+
+## Corporations have their own wallets
+
+Open the "Corporation" page from the "World" tab
+of the navigation menu.
+
+On this page you will find the "Funds" stat.
+The initial value of this stat is always 150 billion.
+Money spent by the corporation will always come from its funds
+and never from your own money.
+
+## Create your first division
+
+1. Click the "Expand" button at the top of the "Corporation" page
+   (next to the name of your corporation)
+2. Select "Agriculture" from the drop-down
+3. Enter the name for your new division
+4. Click the "Expand" button next to division name
+
+Congratulations! Your corporation now has 1 division, but it does
+not yet have any employees.
+
+## Hire the employees
+
+1. Open the "Corporation" page and click on the name of the division
+   you created in the previous step. This will open the division
+   management tab of the "Corporation" page.
+2. Scroll down to find the "Office Space" section. In this section
+   you will see "Size: 0 / 3 employees"
+3. Click the "Hire Employee" button 3 times
+4. Use the up arrows in the bottom right corner of the
+   "Office Space" section to assign one employee to "Operations",
+   one to "Business" and one to "Management"
+
+Now your corporation has 3 employees and is spending about 1.5 thousand
+per second on salaries, but is still not producing enything because
+your division needs to buy water and chemicals.
+
+## Buy the input materials
+
+On your division management tab you can see
+
+0.5 Water + 0.2 Chemicals => 1 Plants + 1 Food
+
+This means that your division consumes "Water" and "Chemicals" and
+turns them into "Plants" and "Food". Water, chemicals, plants
+and food are all "materials". Most industries consume materials.
+Some industries produce and sell materials, some industries produce
+and sell "products". Products will be discussed in future lessons.
+
+To buy input materials you will need "Smart Supply":
+1. Open the "Corporation" page
+2. Scroll down to the "Unlocks" section
+3. In this section click the button that says
+   "$25.000 b" next to "Smart Supply"
+4. On your division management tab click the
+   "Configure Smart Supply" button. It will open a pop-up.
+5. In the pop-up toggle "Enable Smart Supply" and leave the other
+   toggles in their default positions
+6. Close the pop-up
+
+In a future lesson I will discuss a better way of
+buying input materials.
+
+On your division management tab there is a progress bar that
+shows your corporation cycling through 5 states:
+
+Start -> Purchase -> Production -> Export -> Sale
+
+* When your corporation enters the "Purchase" state,
+  all your divisions will buy materials that you
+  (or Smart Supply, if enabled) ordered them to buy,
+  but only if there is enough free space in the "Warehouse".
+* When your corporation enters the "Production" state,
+  all your divisions will consume input materials and turn
+  them into products or output materials, but only if there
+  are enough input materials in the "Warehouse".
+  Some industries like "Agriculture" also need free space "Warehouse"
+  because their outputs take up more space than their inputs.
+
+Now you are producing plants and food, but you are just storing
+them in your warehouse instead of selling them.
+
+## Sell the output materials
+
+The right half of the division management tab manages the warehouse.
+
+* When your corporation enters the "Sale" state,
+  all your divisions will sell materials or products
+  at the prices you set. 
+
+1. In the "Food" section click the "Sell" button.
+   Do not be alarmed by the colour of the
+   text on this button. The button will open a pop-up.
+2. At the bottom of the pop-up there are two input fields
+   and a "Confirm" button. Unfortunately there is no
+   spacing between the two input fields so it will
+   at first glance look like there is only one field
+3. Enter "MAX" in the left input field. This sets no
+   limit on the amount of food you sell per second. 
+4. Enter "MP" in the right input field. This tells
+   your division to sell food at the "market price"
+   and to automatically adjust the sale price when
+   the "market price" changes.
+   * High prices reduce how much you are able to sell per second
+   * Low prices increase how much you are able to sell per second
+5. Press the "Confirm" button
+6. Configure your division to sell "Plants" too. Use "MAX" and "MP"
+   like above.
+
+Now your corporation is selling plants and food and is turning
+a (very small) profit (about one thousand per second). Note that all
+the money earned in the "Sale" state goes into the funds of
+the corporation. You do not earn any money from your corporation yet.
+
+## Dividends
+
+The last game mechannic I will demonstrate in this lesson
+is dividends. Dividends are how you earn money from
+your corporation.
+
+Beware: in this lesson we will "take a corporation public"
+much earlier that would be optimal. This will drastically reduce
+it's ability to quickly grow. That is ok because:
+1. We are doing this just to demonstrade the mechannic
+2. Starting this corporation did not cost us anything
+   thanks to "seed money"
+3. We will sell this corporation and start over soon afterwards
+
+To set dividends:
+1. Click the "Go Public" button on the "Corporation" page.
+   It will open a pop-up
+2. In the pop-up type 0 into the input field that tells you how many
+   shares to issue
+3. Click the "Go Public" button in the pop-up
+4. Click the "Issue Dividends" button on the "Corporation" page.
+   It will open a pop-up
+5. In the pop-up type a number between 1 and 100 into
+   the input field
+6. Click the "Allocate Dividend Percentge" button
+
+Now a percentge of the profits the corporation makes will
+be siphoned off from its funds and divided between its shareholders.
+
+You will likely notice that the money you get
+is substantialy less than P*D*O/T,
+where P="Total Profit", D="Dividend Percentge",
+O="Owned Stock Shares", T="Total Stock Shares".
+This is because of taxes.
+
+TODO: insert graph of taxes
+
+## Starting over
+
+Beware: it will usually be very inefficient to sell
+a corporation. It takes time to grow a corporation
+into a higly profitable money generator. If you sell it,
+the process starts over from the beginning.   
+
+Sell as many shares as you have minus one (the game forces
+you to keep at least one share) and then start over:
+1. Click the "Sell Shares" button on the "Corporation" page.
+   It will open a pop-up.
+2. In the pop-up type the number of shares to sell into the
+   inut field.
+3. Click the "Sell shares" button. This will earn you some money.
+   In my testing I got 54 billion, but your milage may vary.
+   If I self-funded the corporation, this would be a net
+   loss of 96 billion. Fortunately I used seed money making
+   this a 54 billion net gain.
+4. Optional: use the money to buy more RAM for your home
+   computer. You will likely want to at least partially
+   automate the management of your corporation, but
+   corporation API functions cost a lot of RAM. Buying
+   home RAM solves this problem.
+5. Click the "Sell CEO Position" button on the "Corporation" page.
+   Note: "Selling" the CEO position will never earn you any money
+   regardless of the number of shares you have. This might be a bug.
+   Clicking this button will open a pop-up.
+6. In the pop-up enter a name for your next corporation and click
+   the "Use seed money" button.
+   
+## Recap
+
+Corporations:
+1. Hire employees
+2. Buy materials
+3. Transform materials into other materials and/or products 
+4. Sell products and/or materials they produce at a profit
+5. Siphon off a configured percentge of the profits
+   as dividends for investors
+
+The remainder of the lessons will discuss how to grow your
+corporation and how to optimize it for faster growth

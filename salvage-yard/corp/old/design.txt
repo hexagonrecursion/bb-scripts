@@ -1,0 +1,4 @@
+Design philosophy:
+* learn by doing
+* teach mechannics before strategies
+* teach mechannics before optimization
