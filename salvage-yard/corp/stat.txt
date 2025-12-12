@@ -1,6 +1,0 @@
-1ad 22sci 400real/500=500+0% no-tea no-mor no-ds.ts $175b
-4ad 41sci 950/1080=600+80% tea mor ds.ts
-6ad 51sci 900/1020=600+70% tea mor ds.ts $412b
-
-corp/3/v2.ts: 517.212b
-corp/3/v2.ts: {"advert":4,"smartStorage":8,"warehouse":5,"office":4,"boost":0.8357975135311179,"operations":1,"engineer":1,"business":1,"management":1}
