@@ -20,16 +20,16 @@ const round1Weights = {
 };
 
 const round2Weights = {
-  "smartStorage":19,
-  "agricultureAdvert":14,
+  "smartStorage":18,
+  "agricultureAdvert":15,
   "agricultureWarehouse":13,
   "agricultureOffice":12,
   "chemicalWarehouse":8,
   "chemicalOffice":6,
-  "agricultureOperations":5,
-  "agricultureEngineer":3,
+  "agricultureOperations":4,
+  "agricultureEngineer":2,
   "agricultureBusiness":2,
-  "agricultureManagement":2,
+  "agricultureManagement":4,
   "chemicalOperations":1,
   "chemicalEngineer":3,
   "chemicalManagement":2,
@@ -814,12 +814,10 @@ function mutateWeights(ns: NS, round: 1 | 2, best: Levels): Levels {
     mutateWhat === 'agricultureBoost'
     || mutateWhat === 'chemicalBoost'
   ) {
-    res[mutateWhat] = 0.5 + 0.5 * Math.random();
+    res[mutateWhat] = (res[mutateWhat] + Math.random()) / 2;
   } else {
-    res[mutateWhat] = (
-      Math.max(1, res[mutateWhat])
-      * 3 * Math.random()
-    );
+    const previous = Math.max(1, res[mutateWhat]);
+    res[mutateWhat] = previous * (Math.random() + Math.random());
   }
   return res;
 }
