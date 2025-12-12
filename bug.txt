@@ -1,0 +1,4 @@
+was:
+{"smartStorage":18,"agricultureAdvert":14,"agricultureWarehouse":13,"agricultureOffice":11,"chemicalWarehouse":10,"chemicalOffice":5,"agricultureOperations":4,"agricultureEngineer":3,"agricultureBusiness":2,"agricultureManagement":2,"chemicalOperations":1,"chemicalEngineer":3,"chemicalManagement":1,"agricultureBoost":0.761570647126505,"chemicalBoost":0.5}
+got:
+{"smartStorage":15,"agricultureAdvert":13,"agricultureWarehouse":12,"agricultureOffice":11,"chemicalWarehouse":11,"chemicalOffice":7,"agricultureOperations":4,"agricultureEngineer":3,"agricultureBusiness":2,"agricultureManagement":2,"chemicalOperations":2,"chemicalEngineer":4,"chemicalManagement":1,"agricultureBoost":0.761570647126505,"chemicalBoost":0.9386563460703456}
