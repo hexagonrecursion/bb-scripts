@@ -1,0 +1,17 @@
+{
+  "smartStorage":24,
+  "agricultureAdvert":10,
+  "agricultureWarehouse":15,
+  "agricultureOffice":8,
+  "chemicalWarehouse":7,
+  "chemicalOffice":5,
+  "agricultureOperations":3,
+  "agricultureEngineer":2,
+  "agricultureBusiness":1,
+  "agricultureManagement":2,
+  "chemicalOperations":2,
+  "chemicalEngineer":2,
+  "chemicalManagement":1,
+  "agricultureBoost":0.8180641604554106,
+  "chemicalBoost":0.6593555159533266
+}

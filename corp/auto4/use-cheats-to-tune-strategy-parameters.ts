@@ -1,3 +1,4 @@
+// gives 500b
 const round1Weights = {
   "smartStorage":8,
 
@@ -19,22 +20,23 @@ const round1Weights = {
   "chemicalBoost":0,
 };
 
+// gives 9t
 const round2Weights = {
-  "smartStorage":18,
-  "agricultureAdvert":15,
+  "smartStorage":27,
+  "agricultureAdvert":7,
   "agricultureWarehouse":13,
-  "agricultureOffice":12,
-  "chemicalWarehouse":8,
-  "chemicalOffice":6,
+  "agricultureOffice":10,
+  "chemicalWarehouse":6,
+  "chemicalOffice":5,
   "agricultureOperations":4,
   "agricultureEngineer":2,
-  "agricultureBusiness":2,
-  "agricultureManagement":4,
-  "chemicalOperations":1,
-  "chemicalEngineer":3,
-  "chemicalManagement":2,
-  "agricultureBoost":0.761570647126505,
-  "chemicalBoost":0.5
+  "agricultureBusiness":1,
+  "agricultureManagement":3,
+  "chemicalOperations":2,
+  "chemicalEngineer":2,
+  "chemicalManagement":1,
+  "agricultureBoost":0.7944433974676444,
+  "chemicalBoost":0.8444046937309231
 };
 
 export async function main(ns: NS) {
@@ -42,19 +44,34 @@ export async function main(ns: NS) {
   if (round !== 1 && round !== 2) {
     throw new Error('Please select a round to optimize');
   }
+  cheats.compressTime(100);
   const {
     createCorporation,
     getCorporation,
   } = ns.corporation;
 
+  const accelerate: AccelerateApplyLevels = {
+    setRp: (div, rp) => cheats.corporationSetResearchPoints(div, rp),
+    setFunds: (funds) => cheats.corporationSetFunds(funds),
+    maxMoraleEnergy: () => cheats.corporationMaxMoraleEnergy(),
+  };
+
   let best = {1: round1Weights, 2: round2Weights}[round];
-  let beseScore = undefined;
+  let bestScore = undefined;
+  let goalEvaluations = 0;
   // stochastic hill-climbing optimizer
   while (true) {
+    if(goalEvaluations % 10 === 0) {
+      bestScore = undefined
+    }
     cheats.deleteCorporation();
     createCorporation('corp', false);
     cheats.corporationFastForward();
-    await init(ns, round);
+    await init(
+      ns,
+      round,
+      {...accelerate, stabilizeSeconds: 20},
+    );
     if(round === 2) {
       const experimentalyDeterminedMedianFunds = 319e9;
       cheats.corporationSetFunds(experimentalyDeterminedMedianFunds);
@@ -63,7 +80,7 @@ export async function main(ns: NS) {
     const teaParty = 1e9;
 
     const weights = (
-      beseScore === undefined
+      bestScore === undefined
       ? best
       : mutateWeights(ns, round, best)
     );
@@ -78,31 +95,52 @@ export async function main(ns: NS) {
         }
       }
     }
-    const score = await evaluateScore(ns, round, levels);
-    ns.print(ns.formatNumber(score));
+    const score = await evaluateScore(
+      ns,
+      round,
+      levels,
+      accelerate,
+    );
+    ++goalEvaluations;
+    ns.print({score: ns.formatNumber(score), goalEvaluations});
     ns.print(levels);
-    if (beseScore === undefined || score > beseScore) {
-      beseScore = score;
+    if (bestScore === undefined || score > bestScore) {
+      bestScore = score;
       best = levels;
-      ns.tprint(ns.formatNumber(score));
+      ns.tprint({score: ns.formatNumber(score), goalEvaluations});
       ns.tprint(levels);
     }
   }
 }
 
+type AccelerateApplyLevels = {
+  setRp(division: string, rp: number): void,
+  setFunds(funds: number): void,
+  maxMoraleEnergy(): void,
+  stabilizeSeconds?: number,
+};
+
 async function evaluateScore(
-  ns: NS, round: 1 | 2, levels: Levels,
+  ns: NS,
+  round: 1 | 2,
+  levels: Levels,
+  accelerate?: AccelerateApplyLevels,
 ): Promise<number> {
+  // ns.print({funds: ns.corporation.getCorporation().funds});
   const {getInvestmentOffer} = ns.corporation; 
-  await applyLevels(ns, round, levels);
+  await applyLevels(ns, round, levels, accelerate);
   return getInvestmentOffer().funds;
 }
 
 async function applyLevels(
-  ns: NS, round: 1 | 2, levels: Levels,
+  ns: NS,
+  round: 1 | 2,
+  levels: Levels,
+  accelerate?: AccelerateApplyLevels,
 ) {
   const {
     nextUpdate,
+    getDivision,
   } = ns.corporation;
   const agriCities = Object.values(ns.enums.CityName);
   const chemCities = round === 2 ? agriCities : [];
@@ -115,15 +153,27 @@ async function applyLevels(
   setOffice(ns, 'Chemical', chemCities, levels.chemicalOffice);
 
   ns.print('tea');
+  accelerate?.maxMoraleEnergy();
   while (buyTeaAndParty(ns) > 1) {
     await nextUpdate();
   }
 
-  const researchSeconds = 200;
   setJobs(ns, 'Agriculture', agriCities, { research: levels.agricultureOffice });
   setJobs(ns, 'Chemical', chemCities, { research: levels.chemicalOffice });
   ns.print('research');
-  for (let t = 0; t < researchSeconds / 10 * 5; ++t) {
+  const rpGoals = {
+    1: {'Agriculture': 65},
+    2: {'Agriculture': 170, 'Chemical': 75},
+  }[round];
+  for(const [div, rp] of Object.entries(rpGoals)) {
+    accelerate?.setRp(div, rp);
+  }
+  while(
+    Object.entries(rpGoals)
+      .some(([div, rp]) => (
+        getDivision(div).researchPoints < rp
+      ))
+  ) {
     await nextUpdate();
     buyTeaAndParty(ns);
   }
@@ -156,13 +206,13 @@ async function applyLevels(
     engineer: levels.chemicalEngineer,
     management: levels.chemicalManagement,
   });
-  const stabilizeSeconds = 200;
   ns.print('stabilize');
   setSellMaterial(ns, 'Agriculture', agriCities, 'Food');
   setSellMaterial(ns, 'Agriculture', agriCities, 'Plants');
   setSellMaterial(ns, 'Chemical', chemCities, 'Chemicals');
   setExportMaterial(ns, 'Chemical', 'Agriculture', chemCities, 'Chemicals');
   setExportMaterial(ns, 'Agriculture', 'Chemical', chemCities, 'Plants');
+  const stabilizeSeconds = accelerate?.stabilizeSeconds ?? 400;
   for (let t = 0; t < stabilizeSeconds / 10 * 5; ++t) {
     if(round === 1) {
       doDumbSupply(ns, 'Agriculture', agriCities);
@@ -508,6 +558,7 @@ function buyTeaAndParty(ns: NS): number {
   if (getCorporation().nextState !== 'START') {
     return 100;
   }
+  // ns.print({funds: ns.corporation.getCorporation().funds});
   let maxDiff = 0;
   for (const division of getCorporation().divisions) {
     for (const city of getDivision(division).cities) {
@@ -814,7 +865,7 @@ function mutateWeights(ns: NS, round: 1 | 2, best: Levels): Levels {
     mutateWhat === 'agricultureBoost'
     || mutateWhat === 'chemicalBoost'
   ) {
-    res[mutateWhat] = (res[mutateWhat] + Math.random()) / 2;
+    res[mutateWhat] = (7 * res[mutateWhat] + Math.random()) / 8;
   } else {
     const previous = Math.max(1, res[mutateWhat]);
     res[mutateWhat] = previous * (Math.random() + Math.random());
@@ -822,7 +873,11 @@ function mutateWeights(ns: NS, round: 1 | 2, best: Levels): Levels {
   return res;
 }
 
-async function init(ns: NS, round: 1 | 2) {
+async function init(
+  ns: NS,
+  round: 1 | 2,
+  accelerate?: AccelerateApplyLevels,
+) {
   const {
     expandIndustry,
     expandCity,
@@ -844,9 +899,10 @@ async function init(ns: NS, round: 1 | 2) {
   const {funds} = getCorporation();
   const teaParty = 1e9;
   const levels = computeLevels(ns, 1, round1Weights, funds - teaParty);
-  await applyLevels(ns, 1, levels);
+  await applyLevels(ns, 1, levels, accelerate);
   const ok = acceptInvestmentOffer();
   assert(ok, 'acceptInvestmentOffer');
+  accelerate?.setFunds(1e12 /* will be overwritten in main() */);
   setUnlock(ns, 'Export');
   setUnlock(ns, 'Smart Supply');
   expandIndustry('Chemical', 'Chemical');
@@ -943,5 +999,37 @@ const cheats = {
   },
   corporationSetFunds(funds: number): void {
     this.getPlayer().corporation.funds = funds;
+  },
+  corporationSetResearchPoints(
+    division: string, researchPoints: number
+  ): void {
+    const {divisions} = this.getPlayer().corporation;
+    divisions.get(division).researchPoints = researchPoints;
+  },
+  corporationMaxMoraleEnergy(): void {
+    const {divisions} = this.getPlayer().corporation;
+    for(const {offices} of divisions.values()) {
+      for(const off of Object.values(offices) as any) {
+        off.avgEnergy = off.maxEnergy;
+        off.avgMorale = off.maxMorale;
+      }
+    }
+  },
+  compressTime(compressionFactor: number): void {
+    const realSetTimeout = (setTimeout as any).real ?? setTimeout;
+    globalThis.setTimeout = (fun: any, delay: unknown, ...param: any) => {
+      if(typeof delay !== 'number') {
+        return realSetTimeout(fun, delay, ...param);
+      }
+      return realSetTimeout(fun, delay/compressionFactor, ...param)
+    };
+    (setTimeout as any).real = realSetTimeout;
+
+    if((Date.prototype as any).realGetTime === undefined) {
+      (Date.prototype as any).realGetTime = Date.prototype.getTime;
+    }
+    Date.prototype.getTime = function() {
+      return (this as any).realGetTime() * compressionFactor;
+    };
   },
 };
